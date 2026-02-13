@@ -393,7 +393,7 @@ function LandingPage() {
     <div className="min-h-screen flex items-center justify-center">
       <div className="min-h-[50vh] w-full max-w-2xl flex flex-col items-center justify-center gap-6">
         <h1 className="text-4xl font-semibold text-pink-800 animate-fade-in-up">
-          Hi
+          Hi baby
         </h1>
         <div className="relative w-full max-w-sm">
           <img src={gif} alt="" className="w-full -scale-x-100" />
