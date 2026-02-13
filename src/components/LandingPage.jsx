@@ -33,6 +33,7 @@ import like19 from '../assets/depositphotos_370580424-stock-illustration-cute-em
 import like20 from '../assets/e4243cea6a2b24b8c57f1a3f0765537e.jpg';
 import like21 from '../assets/heart-meme-heart (1).gif';
 import yesGif from '../assets/uym3q9dazq9c1.gif';
+import yesMusic from '../assets/Nandyan Agad Ako Lyrics  Flow G.mp3';
 
 const LIKE_GALLERY_IMAGES = [
   like1, like2, like3, like4, like5, heartMemeGif, kermitGif, like6, like7,
@@ -121,6 +122,7 @@ function LandingPage() {
   const [noButtonOpacity, setNoButtonOpacity] = useState(1);
   const [showYesGif, setShowYesGif] = useState(false);
   const noButtonRef = useRef(null);
+  const yesAudioRef = useRef(null);
 
   useEffect(() => {
     const saved = localStorage.getItem(VALENTINE_VIEW_KEY);
@@ -163,6 +165,12 @@ function LandingPage() {
     } else {
       localStorage.removeItem(VALENTINE_YES_GIF_KEY);
     }
+  }, [showYesGif]);
+
+  useEffect(() => {
+    if (!showYesGif) return;
+    if (!yesAudioRef.current) yesAudioRef.current = new Audio(yesMusic);
+    yesAudioRef.current.play().catch(() => {});
   }, [showYesGif]);
 
   useEffect(() => {
