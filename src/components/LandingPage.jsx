@@ -2,8 +2,6 @@ import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 
 const VALENTINE_VIEW_KEY = 'valentine-view';
 const VALENTINE_YES_GIF_KEY = 'valentine-show-yes-gif';
-const VALENTINE_REFRESH_COUNT_KEY = 'valentine-refresh-count';
-const REFRESH_TIMES = 4;
 import gif from '../assets/3138eaae6e8ea4ae435b640c38054afd.gif';
 import kermitGif from '../assets/kermit-kermit-love.gif';
 import imagesJpeg from '../assets/images.jpeg';
@@ -124,7 +122,14 @@ function LandingPage() {
   const noButtonRef = useRef(null);
   const yesAudioRef = useRef(null);
 
+  const SESSION_KEY = 'valentine-session-visited';
+
   useEffect(() => {
+    const isRefresh = sessionStorage.getItem(SESSION_KEY);
+    if (!isRefresh) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      return;
+    }
     const saved = localStorage.getItem(VALENTINE_VIEW_KEY);
     const savedYesGif = localStorage.getItem(VALENTINE_YES_GIF_KEY);
     if (saved === 'likeGallery') {
@@ -172,17 +177,6 @@ function LandingPage() {
     if (!yesAudioRef.current) yesAudioRef.current = new Audio(yesMusic);
     yesAudioRef.current.play().catch(() => {});
   }, [showYesGif]);
-
-  useEffect(() => {
-    if (!showLikeGallery || !showYesGif) return;
-    const count = parseInt(localStorage.getItem(VALENTINE_REFRESH_COUNT_KEY) || '0', 10);
-    if (count < REFRESH_TIMES) {
-      localStorage.setItem(VALENTINE_REFRESH_COUNT_KEY, String(count + 1));
-      const t = setTimeout(() => window.location.reload(), 1500);
-      return () => clearTimeout(t);
-    }
-    localStorage.removeItem(VALENTINE_REFRESH_COUNT_KEY);
-  }, [showLikeGallery, showYesGif]);
 
   const handleGalleryMouseMove = useCallback((e) => {
     const btn = noButtonRef.current;
