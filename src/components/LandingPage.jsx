@@ -9,6 +9,7 @@ import heartsPng from '../assets/pngtree-smiling-face-with-hearts-emoji-png-imag
 import photoRight from '../assets/7478539b7c5cab50e622ab4169806836.jpg';
 import photoLeft from '../assets/4167bde8d78c482cb18a86542cbc7dbf.jpg';
 import heartMemeGif from '../assets/heart-meme-heart.gif';
+import isaPaImage from '../assets/e4243cea6a2b24b8c57f1a3f0765537e.jpg';
 import like1 from '../assets/ea863fabd7ad0d6c2c054846ca34756d.jpg';
 import like2 from '../assets/eef2667d2b5a197f8a5df9e2f828f4fb.jpg';
 import like3 from '../assets/fefd95b4b551b14bd0be740fd1d4c471.jpg';
@@ -53,16 +54,16 @@ function IsaPaView({ onClose, onLike }) {
   const dislikeRef = useRef(null);
   const containerRef = useRef(null);
 
-  const handleMouseMove = useCallback((e) => {
+  const handleMove = useCallback((clientX, clientY) => {
     const btn = dislikeRef.current;
     if (!btn) return;
     const rect = btn.getBoundingClientRect();
-    const dist = distToRect(e.clientX, e.clientY, rect);
+    const dist = distToRect(clientX, clientY, rect);
     if (dist < RUN_AWAY_RADIUS && dist > 0) {
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
+      const dx = clientX - cx;
+      const dy = clientY - cy;
       const len = Math.hypot(dx, dy) || 1;
       const push = (1 - dist / RUN_AWAY_RADIUS);
       setOffset({
@@ -74,17 +75,26 @@ function IsaPaView({ onClose, onLike }) {
     }
   }, []);
 
+  const handleTouchMove = useCallback((e) => {
+    if (e.touches.length) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, [handleMove]);
+
+  const resetOffset = useCallback(() => setOffset({ x: 0, y: 0 }), []);
+
   return (
     <div
       ref={containerRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => setOffset({ x: 0, y: 0 })}
+      onMouseMove={(e) => handleMove(e.clientX, e.clientY)}
+      onMouseLeave={resetOffset}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={resetOffset}
+      onTouchCancel={resetOffset}
       className="min-h-screen flex flex-col items-center justify-center px-4 gap-6 py-8"
     >
       <h1 className="text-center text-xl md:text-2xl text-pink-800 font-medium max-w-xl">
         H1ndi ko aL4m ang k4t4pUs4n ng un1v3rse, p3ro aL4m ko, ang s1muL4, U N 1.
       </h1>
-      <img src={heartMemeGif} alt="" className="max-w-sm w-full" />
+      <img src={isaPaImage} alt="" className="max-w-sm w-full" />
       <div className="flex gap-4 items-center justify-center relative min-h-[48px]">
         <button
           ref={dislikeRef}
@@ -178,16 +188,16 @@ function LandingPage() {
     yesAudioRef.current.play().catch(() => {});
   }, [showYesGif]);
 
-  const handleGalleryMouseMove = useCallback((e) => {
+  const handleGalleryMove = useCallback((clientX, clientY) => {
     const btn = noButtonRef.current;
     if (!btn) return;
     const rect = btn.getBoundingClientRect();
-    const dist = distToRect(e.clientX, e.clientY, rect);
+    const dist = distToRect(clientX, clientY, rect);
     if (dist < RUN_AWAY_RADIUS && dist > 0) {
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
+      const dx = clientX - cx;
+      const dy = clientY - cy;
       const len = Math.hypot(dx, dy) || 1;
       const push = (1 - dist / RUN_AWAY_RADIUS);
       setNoButtonOffset({
@@ -199,6 +209,15 @@ function LandingPage() {
       setNoButtonOffset({ x: 0, y: 0 });
       setNoButtonOpacity(1);
     }
+  }, []);
+
+  const handleGalleryTouchMove = useCallback((e) => {
+    if (e.touches.length) handleGalleryMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, [handleGalleryMove]);
+
+  const resetNoButton = useCallback(() => {
+    setNoButtonOffset({ x: 0, y: 0 });
+    setNoButtonOpacity(1);
   }, []);
 
   const likeGallerySlots = useMemo(() => {
@@ -226,11 +245,11 @@ function LandingPage() {
     return (
       <div
         className="fixed inset-0 h-screen w-screen overflow-hidden"
-        onMouseMove={handleGalleryMouseMove}
-        onMouseLeave={() => {
-          setNoButtonOffset({ x: 0, y: 0 });
-          setNoButtonOpacity(1);
-        }}
+        onMouseMove={(e) => handleGalleryMove(e.clientX, e.clientY)}
+        onMouseLeave={resetNoButton}
+        onTouchMove={handleGalleryTouchMove}
+        onTouchEnd={resetNoButton}
+        onTouchCancel={resetNoButton}
       >
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center gap-6">
           <p
